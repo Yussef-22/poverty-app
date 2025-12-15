@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  poverty-app:
+    image: poverty-app:latest
+    container_name: poverty-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8600:8501"   # External 8600 -> Internal 8501
+    restart: unless-stopped
+    environment:
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_ADDRESS=0.0.0.0
+    volumes:
+      - ./models:/app/models  # Optional: mount local models
