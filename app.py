@@ -28,8 +28,8 @@ def load_model():
 model = load_model()
 
 st.title("Poverty Probability Predictor")
-st.write("DEBUG – pipeline steps:")
-st.write(model.named_steps)
+# st.write("DEBUG – pipeline steps:")
+# st.write(model.named_steps)
 
 
 # ====================================================
@@ -76,30 +76,35 @@ if st.button("Predict v1.3"):
 #   SHAP VALUES (ON-DEMAND, SAFE)
 # ====================================================
 
-#@st.cache_resource
-def get_shap_explainer(model):
-    # comment: Create SHAP TreeExplainer without caching (safe)
-    return shap.TreeExplainer(model)
+# #@st.cache_resource
+# def get_shap_explainer(model):
+#     # comment: Create SHAP TreeExplainer without caching (safe)
+#     return shap.TreeExplainer(model)
 
+def get_shap_explainer(pipeline):
+    # comment: Extract final XGBoost model from sklearn Pipeline
+    xgb_model = pipeline.named_steps["model"]
+    return shap.TreeExplainer(xgb_model)
 
-if st.button("Show SHAP explanation"):
-    if "df_ready" not in st.session_state:
-        st.warning("Please run a prediction first.")
-    else:
-        df_ready = st.session_state["df_ready"]
+with st.expander("🔍 Explain prediction with SHAP"):
+    if st.button("Show SHAP explanation"):
+        if "df_ready" not in st.session_state:
+            st.warning("Please run a prediction first.")
+        else:
+            df_ready = st.session_state["df_ready"]
 
-        with st.spinner("Computing SHAP values..."):
-            explainer = get_shap_explainer(model)
-            shap_values = explainer.shap_values(df_ready)
+            with st.spinner("Computing SHAP values..."):
+                explainer = get_shap_explainer(model)
+                shap_values = explainer.shap_values(df_ready)
 
-            fig, ax = plt.subplots()
-            shap.summary_plot(
-                shap_values,
-                df_ready,
-                plot_type="bar",
-                show=False
-            )
-            st.pyplot(fig)
+                fig, ax = plt.subplots()
+                shap.summary_plot(
+                    shap_values,
+                    df_ready,
+                    plot_type="bar",
+                    show=False
+                )
+                st.pyplot(fig)
 
 
 # ====================================================
