@@ -74,10 +74,10 @@ if st.button("Predict v1.3"):
 #   SHAP VALUES (ON-DEMAND, SAFE)
 # ====================================================
 
-@st.cache_resource
+#@st.cache_resource
 def get_shap_explainer(model):
-    # comment: Cache SHAP TreeExplainer, ignore model hashing
-      return shap.TreeExplainer(_model)
+    # comment: Create SHAP TreeExplainer without caching (safe)
+    return shap.TreeExplainer(model)
 
 
 if st.button("Show SHAP explanation"):
