@@ -82,9 +82,10 @@ if st.button("Predict v1.3"):
 #     return shap.TreeExplainer(model)
 
 def get_shap_explainer(pipeline):
-    # comment: Extract final XGBoost model from sklearn Pipeline
+    # comment: Extract native XGBoost Booster for SHAP compatibility
     xgb_model = pipeline.named_steps["model"]
-    return shap.TreeExplainer(xgb_model)
+    booster = xgb_model.get_booster()
+    return shap.TreeExplainer(booster)
 
 with st.expander("🔍 Explain prediction with SHAP"):
     if st.button("Show SHAP explanation"):
